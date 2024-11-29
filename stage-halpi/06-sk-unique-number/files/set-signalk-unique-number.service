@@ -1,0 +1,10 @@
+[Unit]
+Description=Set Signal K CAN interface unique number
+Before=signalk.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/set-signalk-unique-number
+
+[Install]
+WantedBy=multi-user.target

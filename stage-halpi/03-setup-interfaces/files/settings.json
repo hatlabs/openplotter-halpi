@@ -12,7 +12,7 @@
             "subOptions": {
               "type": "canbus-canboatjs",
               "interface": "can0",
-              "uniqueNumber": 576977
+              "uniqueNumber": 123456
             }
           }
         }
