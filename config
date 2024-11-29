@@ -4,5 +4,5 @@ FIRST_USER_PASS="raspberry"
 DISABLE_FIRST_BOOT_USER_RENAME="1"
 TARGET_HOSTNAME="openplotter"
 WPA_COUNTRY="GB"
-STAGE_LIST="stage0 stage1 stage2 stage3 stage4 stage-openplotter stage-halpi"
+STAGE_LIST="stage-pre-openplotter stage0 stage1 stage2 stage3 stage4 stage-openplotter stage-halpi"
 ENABLE_SSH=1
