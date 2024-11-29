@@ -49,8 +49,7 @@ jobs:
 
       - name: 👷 Build
         run: |
-          cp -R stage-openplotter pi-gen/
-          cp -R stage-halpi pi-gen/
+          cp -R stage-* pi-gen/
           touch pi-gen/stage5/SKIP
           touch pi-gen/stage{2,4,-openplotter}/SKIP_IMAGES
           touch pi-gen/stage-halpi/EXPORT_IMAGE
