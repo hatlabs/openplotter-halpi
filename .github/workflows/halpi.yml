@@ -23,7 +23,7 @@ env:
 jobs:
   image-builder:
     name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m
     strategy:
       fail-fast: false
       matrix:
