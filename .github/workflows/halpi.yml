@@ -23,7 +23,7 @@ env:
 jobs:
   image-builder:
     name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-arm64
     strategy:
       fail-fast: false
       matrix:
@@ -64,7 +64,7 @@ jobs:
           touch pi-gen/stage-halpi/EXPORT_IMAGE
           cp config pi-gen/ && cd pi-gen
           echo "RELEASE='${{ env.PLATFORM }}'" >> "./config"
-          sudo IMG_FILENAME=${{ env.OPENPLOTTER }} ARCHIVE_FILENAME=${{ env.OPENPLOTTER }} ./build.sh
+          sudo IMG_FILENAME=${{ env.OPENPLOTTER }} ARCHIVE_FILENAME=${{ env.OPENPLOTTER }} ./build-docker.sh
 
       - name: 📦 Upload
         if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' }}
