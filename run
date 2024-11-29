@@ -105,12 +105,18 @@ function _test_export_unset {
 
 function build {
   act \
+    pull_request \
     -s GITHUB_TOKEN="$(gh auth token)" \
     -P ubuntu-latest-arm64=catthehacker/ubuntu:act-latest
 }
 
 function clean {
   docker rm -v pigen_work
+}
+
+function copy-images {
+  CONTAINER=$(docker ps -l -q)
+  docker cp $CONTAINER:$PWD/pi-gen/deploy .
 }
 
 ################################################################################
