@@ -6,19 +6,6 @@ on:
       - 'v*'
 
 jobs:
-  build_image:
-    name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
-    strategy:
-      fail-fast: false
-      matrix:
-        pi-gen: [
-          { branch: arm64,  architecture: arm64 }
-        ]
-    uses: ./.github/workflows/_build_image.yml
-    with:
-      upload_artifact: true
-    secrets: inherit
-
   github_publish:
     name: 🚀 Publish GitHub Releases
     runs-on: ubuntu-latest
@@ -26,12 +13,24 @@ jobs:
       - name: ⬇ Checkout OpenPlotter-HALPI
         uses: actions/checkout@v4
 
+      - name: 🫧 Get latest commit on main branch
+        run: echo "LATEST_COMMIT=$(git rev-parse origin/main)" >> $GITHUB_ENV
+
+      - name: Get workflow run ID for the latest commit
+        id: get_workflow_run
+        run: |
+          COMMIT_SHA=${{ env.LATEST_COMMIT }}
+          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs?branch=main&status=success")
+          RUN_ID=$(echo "$RESPONSE" | jq -r ".workflow_runs[] | select(.head_sha == \"$COMMIT_SHA\") | .id" | head -n 1)
+          echo "WORKFLOW_RUN_ID=$RUN_ID" >> $GITHUB_ENV
+
       - name: 💾 Artifact download
         uses: actions/download-artifact@v4.1.8
         with:
-          pattern: OpenPlotter-HALPI-*
           path: all-artifacts
           merge-multiple: true
+          run-id: ${{ env.WORKFLOW_RUN_ID }}
 
       - name: Create release and upload image
         uses: softprops/action-gh-release@v2
