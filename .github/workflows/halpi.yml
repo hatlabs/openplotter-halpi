@@ -9,10 +9,11 @@ run-name: |
 on:
   push:
     branches:
-      - '**'
+      - 'main'
   pull_request:
     branches:
       - 'main'
+    types: [opened, synchronize, closed]
   workflow_dispatch:
   repository_dispatch:
     types: [ ophalpi_push ]
@@ -64,7 +65,7 @@ jobs:
           sudo IMG_FILENAME=${{ env.OPENPLOTTER }} ARCHIVE_FILENAME=${{ env.OPENPLOTTER }} ./build-docker.sh
 
       - name: 📦 Upload
-        if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || (github.event_name == 'push' && github.event.pull_request.merged) }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.OPENPLOTTER }}
