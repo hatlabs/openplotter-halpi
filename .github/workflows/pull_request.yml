@@ -26,3 +26,6 @@ jobs:
           { branch: arm64,  architecture: arm64 }
         ]
     uses: ./.github/workflows/_build_image.yml
+    with:
+      upload_artifact: true
+    secrets: inherit

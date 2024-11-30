@@ -6,6 +6,19 @@ on:
       - 'v*'
 
 jobs:
+  build_image:
+    name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
+    strategy:
+      fail-fast: false
+      matrix:
+        pi-gen: [
+          { branch: arm64,  architecture: arm64 }
+        ]
+    uses: ./.github/workflows/_build_image.yml
+    with:
+      upload_artifact: true
+    secrets: inherit
+
   github_publish:
     name: 🚀 Publish GitHub Releases
     runs-on: ubuntu-latest
