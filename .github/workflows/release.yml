@@ -33,22 +33,9 @@ jobs:
           path: all-artifacts
           merge-multiple: true
 
-      #- name: Delete previous OpenPlotter-HALPI Release
-      #  uses: dev-drprasad/delete-older-releases@v0.3.4
-      #  with:
-      #    keep_latest: 0
-      #    delete_tags: true
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create release and upload image
-        uses: svenstaro/upload-release-action@v2
+        uses: softprops/action-gh-release@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file_glob: true
-          file: all-artifacts/*
-          tag: OpenPlotter-HALPI
-          release_name: OpenPlotter-HALPI
-          overwrite: true
-          body: |
-            ${{ steps.read_template.outputs.RELEASE_BODY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: all-artifacts/*
+          draft: true
