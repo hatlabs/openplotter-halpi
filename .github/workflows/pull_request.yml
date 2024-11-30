@@ -1,0 +1,31 @@
+name: OpenPlotter-HALPI CI Build
+
+run-name: |
+  ${{ github.event_name == 'push' && format('🌱 Push build - {0}', github.event.head_commit.message) || '' }}
+  ${{ github.event_name == 'pull_request' && format('👷 PR #{0} build - {1}', github.event.pull_request.number, github.event.pull_request.title) || '' }}
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+    types: [opened, synchronize, closed]
+
+env:
+  PLATFORM: bookworm
+
+jobs:
+  image-builder:
+    name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
+    strategy:
+      fail-fast: false
+      matrix:
+        pi-gen: [
+          { branch: arm64,  architecture: arm64 }
+        ]
+    uses: ./.github/workflows/_build_image.yml
+    with:
+      upload_artifact: true
+    secrets: inherit
