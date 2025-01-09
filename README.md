@@ -1,6 +1,6 @@
 # OpenPlotter-HALPI OS Images
 
-This repository contains the necessary files to build the OpenPlotter-HALPI OS images. OpenPlotter-HALPI is a Raspberry Pi OS image based on Raspberry Pi OS with the addition of OpenPlotter and customizations for Hat Labs HALPI series of Raspberry Pi computers. These customizations include native support for SH-RPi power management board and support for NMEA 2000 and NMEA 0183 data interfaces.
+This repository contains the necessary files to build the OpenPlotter-HALPI OS images. OpenPlotter-HALPI is a Raspberry Pi OS image based on Raspberry Pi OS with the addition of OpenPlotter and customizations for Hat Labs HALPI series of Raspberry Pi computers. These customizations include native support for the SH-RPi power management board and support for NMEA 2000 and NMEA 0183 data interfaces.
 
 ## Downloading the Images
 
