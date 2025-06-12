@@ -1,4 +1,4 @@
-name: OpenPlotter-HALPI CI Build
+name: HALPI OS CI Build
 
 run-name: |
   ${{ github.event_name == 'push' && format('🌱 Push build - {0}', github.event.head_commit.message) || '' }}
@@ -17,45 +17,62 @@ env:
 
 jobs:
   image-builder:
-    name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
+    name: "${{ matrix.image.name }} (${{ matrix.architecture }})"
     runs-on: ubuntu-latest-arm64
     strategy:
       fail-fast: false
       matrix:
-        pi-gen: [
-          { branch: arm64,  architecture: arm64 }
-        ]
+        include:
+          - name: OpenPlotter-HALPI
+            config: config.openplotter-halpi
+            filename_prefix: openplotter-halpi
+            architecture: arm64
+          - name: Raspios-HALPI2
+            config: config.rpi-halpi2
+            filename_prefix: raspios-halpi2
+            architecture: arm64
+          - name: OpenPlotter-HALPI2
+            config: config.openplotter-halpi2
+            filename_prefix: openplotter-halpi2
+            architecture: arm64
+          - name: Raspios-lite-HALPI2
+            config: config.rpi-lite-halpi2
+            filename_prefix: raspios-lite-halpi2
+            architecture: arm64
 
     steps:
-      - name: ⬇ Checkout OpenPlotter-HALPI
+      - name: ⬇ Checkout the openplotter-halpi repository
         uses: actions/checkout@v4
 
       - name: ⬇ Checkout pi-gen
         uses: actions/checkout@v4
         with:
           repository: RPi-Distro/pi-gen
-          ref: ${{ matrix.pi-gen.branch }}
+          ref: arm64
           path: pi-gen
 
       - name: 🔧 Prepare
+        id: prep
         run: |
           sudo apt-get update && sudo apt-get install -y coreutils quilt parted qemu-utils qemu-user-static debootstrap zerofree zip dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file git curl bc kmod kpartx arch-test xxd pigz
-          echo "OPENPLOTTER=OpenPlotter-HALPI-${{ env.PLATFORM }}-${{ matrix.pi-gen.architecture }}" >> $GITHUB_ENV
+
+          IMG_FILENAME="${{ matrix.filename_prefix }}-${{ env.PLATFORM }}-${{ matrix.architecture }}"
+          echo "IMG_FILENAME=$IMG_FILENAME" >> $GITHUB_ENV
 
       - name: 👷 Build
         run: |
           cp -R stage-* pi-gen/
           touch pi-gen/stage5/SKIP
           touch pi-gen/stage{2,4,-openplotter}/SKIP_IMAGES
-          touch pi-gen/stage-halpi/EXPORT_IMAGE
-          cp config pi-gen/ && cd pi-gen
+          cp ${{ matrix.config }} pi-gen/config
+          cd pi-gen
           echo "RELEASE='${{ env.PLATFORM }}'" >> "./config"
-          sudo IMG_FILENAME=${{ env.OPENPLOTTER }} ARCHIVE_FILENAME=${{ env.OPENPLOTTER }} ./build-docker.sh
+          sudo IMG_FILENAME=${{ env.IMG_FILENAME }} ARCHIVE_FILENAME=${{ env.IMG_FILENAME }} ./build-docker.sh
 
       - name: 📦 Upload
         if: ${{ inputs.upload_artifact }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.OPENPLOTTER }}
+          name: ${{ env.IMG_FILENAME }}
           path: pi-gen/deploy/*.xz
           retention-days: 3

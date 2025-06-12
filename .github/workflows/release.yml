@@ -1,4 +1,4 @@
-name: OpenPlotter-HALPI CI Release
+name: HALPI OS CI Release
 
 on:
   push:
