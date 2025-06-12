@@ -2,30 +2,49 @@ name: HALPI OS CI Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'main'
+    # Optionally, you can also trigger on tags if you want
+    # tags:
+    #   - 'v*'
+  workflow_dispatch:
 
 jobs:
   github_publish:
-    name: 🚀 Publish GitHub Releases
+    name: 🚀 Draft GitHub Releases
     runs-on: ubuntu-latest
+
     steps:
-      - name: ⬇ Checkout OpenPlotter-HALPI
+      - name: ⬇ Checkout HALPI OS image repository
         uses: actions/checkout@v4
 
-      - name: 🔎 Find the last workflow run id with artifacts
-        run: |
-          echo LAST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=1" | jq ".artifacts[0].workflow_run.id") >> $GITHUB_ENV
+      - name: 🔎 Find latest successful workflow run ID for pull_request.yml
+        id: find_run
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'pull_request.yml',
+              status: 'success',
+              branch: 'main'
+            });
+            if (!runs.data.workflow_runs.length) {
+              throw new Error('No successful workflow runs found for pull_request.yml');
+            }
+            core.setOutput('run_id', runs.data.workflow_runs[0].id);
 
-      - name: 💾 Artifact download
-        uses: actions/download-artifact@v4.1.8
+      - name: 💾 Download build artifacts from last successful pull_request.yml run
+        uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: all-artifacts
           merge-multiple: true
-          run-id: ${{ env.LAST_RUN_ID }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
 
-      - name: Create release and upload image
+      - name: Create draft GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
