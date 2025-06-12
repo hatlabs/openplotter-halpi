@@ -3,6 +3,7 @@ name: HALPI OS CI Build
 run-name: |
   ${{ github.event_name == 'push' && format('🌱 Push build - {0}', github.event.head_commit.message) || '' }}
   ${{ github.event_name == 'pull_request' && format('👷 PR #{0} build - {1}', github.event.pull_request.number, github.event.pull_request.title) || '' }}
+  ${{ github.event_name == 'workflow_dispatch' && '🚀 Manual build' || '' }}
 
 on:
   push:
@@ -12,20 +13,66 @@ on:
     branches:
       - 'main'
     types: [opened, synchronize, closed]
+  workflow_dispatch:
 
 env:
   PLATFORM: bookworm
 
 jobs:
   image-builder:
-    name: "HALPI OS (${{ matrix.pi-gen.architecture }})"
+    name: "${{ matrix.name }}"
+    runs-on: ubuntu-latest-arm64
     strategy:
       fail-fast: false
       matrix:
-        pi-gen: [
-          { branch: arm64,  architecture: arm64 }
-        ]
-    uses: ./.github/workflows/_build_image.yml
-    with:
-      upload_artifact: true
-    secrets: inherit
+        include:
+          - name: OpenPlotter-HALPI
+            config: config.openplotter-halpi
+            filename_prefix: openplotter-halpi
+          - name: Raspios-HALPI2
+            config: config.rpi-halpi2
+            filename_prefix: raspios-halpi2
+          - name: OpenPlotter-HALPI2
+            config: config.openplotter-halpi2
+            filename_prefix: openplotter-halpi2
+          - name: Raspios-lite-HALPI2
+            config: config.rpi-lite-halpi2
+            filename_prefix: raspios-lite-halpi2
+
+    steps:
+      - name: ⬇ Checkout the openplotter-halpi repository
+        uses: actions/checkout@v4
+
+      - name: ⬇ Checkout pi-gen
+        uses: actions/checkout@v4
+        with:
+          repository: RPi-Distro/pi-gen
+          ref: arm64
+          path: pi-gen
+
+      - name: 🔧 Prepare
+        id: prep
+        run: |
+          sudo apt-get update && sudo apt-get install -y coreutils quilt parted qemu-utils qemu-user-static debootstrap zerofree zip dosfstools libarchive-tools libcap2-bin grep rsync xz-utils file git curl bc kmod kpartx arch-test xxd pigz
+          ISODATE=$(date +%Y-%m-%d)
+          echo "ISODATE=$ISODATE" >> $GITHUB_ENV
+          IMG_FILENAME="${{ matrix.filename_prefix }}_${ISODATE}_${{ env.PLATFORM }}"
+          echo "IMG_FILENAME=$IMG_FILENAME" >> $GITHUB_ENV
+
+      - name: 👷 Build
+        run: |
+          cp -R stage-* pi-gen/
+          touch pi-gen/stage5/SKIP
+          touch pi-gen/stage{2,4,-openplotter}/SKIP_IMAGES
+          touch pi-gen/stage-halpi/EXPORT_IMAGE
+          cp ${{ matrix.config }} pi-gen/config
+          cd pi-gen
+          echo "RELEASE='${{ env.PLATFORM }}'" >> "./config"
+          sudo IMG_FILENAME=${{ env.IMG_FILENAME }} ARCHIVE_FILENAME=${{ env.IMG_FILENAME }} ./build-docker.sh
+
+      - name: 📦 Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.IMG_FILENAME }}
+          path: pi-gen/deploy/*.xz
+          retention-days: 3
