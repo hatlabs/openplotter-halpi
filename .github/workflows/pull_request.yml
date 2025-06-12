@@ -1,18 +1,14 @@
 name: HALPI OS CI Build
 
 run-name: |
-  ${{ github.event_name == 'push' && format('🌱 Push build - {0}', github.event.head_commit.message) || '' }}
   ${{ github.event_name == 'pull_request' && format('👷 PR #{0} build - {1}', github.event.pull_request.number, github.event.pull_request.title) || '' }}
   ${{ github.event_name == 'workflow_dispatch' && '🚀 Manual build' || '' }}
 
 on:
-  push:
-    branches:
-      - 'main'
   pull_request:
     branches:
       - 'main'
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize]
   workflow_dispatch:
 
 env:
