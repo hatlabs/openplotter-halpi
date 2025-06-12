@@ -1,0 +1,5 @@
+
+[all]
+
+# Enable serial ports for optional GNSS HAT use
+enable_uart=1

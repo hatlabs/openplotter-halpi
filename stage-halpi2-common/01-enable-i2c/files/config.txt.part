@@ -1,0 +1,4 @@
+
+[all]
+
+dtparam=i2c_arm=on
