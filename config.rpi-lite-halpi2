@@ -1,0 +1,5 @@
+IMG_NAME="raspios-lite-halpi-bookworm-arm64"
+IMG_DATE=$(date +%Y-%m-%dT%H_%M_%S)
+STAGE_LIST="stage-pre-halpi2-rpi stage0 stage1 stage2 stage-halpi2-common stage-halpi2-rpi-lite"
+DEPLOY_COMPRESSION="xz"
+COMPRESSION_LEVEL=9

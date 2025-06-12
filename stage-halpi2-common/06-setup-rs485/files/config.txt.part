@@ -1,0 +1,4 @@
+
+[all]
+
+dtoverlay=uart4-pi5

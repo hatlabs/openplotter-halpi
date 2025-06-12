@@ -1,4 +1,4 @@
-name: OpenPlotter-HALPI CI Build
+name: HALPI OS CI Build
 
 run-name: |
   ${{ github.event_name == 'push' && format('🌱 Push build - {0}', github.event.head_commit.message) || '' }}
@@ -18,7 +18,7 @@ env:
 
 jobs:
   image-builder:
-    name: "OpenPlotter-HALPI (${{ matrix.pi-gen.architecture }})"
+    name: "HALPI OS (${{ matrix.pi-gen.architecture }})"
     strategy:
       fail-fast: false
       matrix:

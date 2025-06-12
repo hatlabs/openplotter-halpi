@@ -1,0 +1,4 @@
+[all]
+
+# Enable external antenna on the CM5
+dtparam=ant2
