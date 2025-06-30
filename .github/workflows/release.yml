@@ -29,7 +29,6 @@ jobs:
               repo: context.repo.repo,
               workflow_id: 'pull_request.yml',
               status: 'success',
-              branch: 'main'
             });
             if (!runs.data.workflow_runs.length) {
               throw new Error('No successful workflow runs found for pull_request.yml');
