@@ -34,7 +34,9 @@ jobs:
             if (!runs.data.workflow_runs.length) {
               throw new Error('No successful workflow runs found for pull_request.yml');
             }
-            core.setOutput('run_id', runs.data.workflow_runs[0].id);
+            // Sort by created_at to get the most recent run
+            const sortedRuns = runs.data.workflow_runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            core.setOutput('run_id', sortedRuns[0].id);
 
       - name: 💾 Download build artifacts from last successful pull_request.yml run
         uses: actions/download-artifact@v4
