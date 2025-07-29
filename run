@@ -107,16 +107,13 @@ function build {
   act \
     pull_request \
     -s GITHUB_TOKEN="$(gh auth token)" \
-    -P ubuntu-latest-arm64=catthehacker/ubuntu:act-latest
+    -P ubuntu-latest-arm64=catthehacker/ubuntu:act-latest \
+    --artifact-server-path $PWD/artifacts \
+    "$@"
 }
 
 function clean {
-  docker rm -v pigen_work
-}
-
-function copy-images {
-  CONTAINER=$(docker ps -l -q)
-  docker cp $CONTAINER:$PWD/pi-gen/deploy .
+  docker rm -v $(docker ps -a --filter "name=pigen_work" --format "{{.Names}}") 2>/dev/null || true
 }
 
 ################################################################################
