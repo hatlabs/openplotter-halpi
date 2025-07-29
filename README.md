@@ -20,10 +20,4 @@ With the prerequisites in place, run the following commands to build the image:
 ./run build
 ```
 
-The build will nominally end with an error due to a failing upload, but if you scroll back a little, you'll notice the image has been built successfully. However, the image still resides in the Docker container. To extract the image, run the following command:
-
-```bash
-./run copy-images
-```
-
-Once run, the image will be copied to the `deploy` directory. The image can then be flashed to an SSD drive or SD card using the Raspberry Pi Imager as described above.
+This command will mimic the GitHub Actions workflow and build the image locally. The image files are stored in the `artifacts` directory. All artifacts are zip files that can be extracted to get the `xz` compressed image files. The image can then be flashed to an SSD drive or SD card using the Raspberry Pi Imager as described above.
