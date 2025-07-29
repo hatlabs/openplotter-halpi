@@ -5,8 +5,8 @@
 sed -i "s/forcehotspot = 1/forcehotspot = 0/g" "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/.openplotter/openplotter.conf"
 sed -i "s/forcehotspot=1/forcehotspot=0/g" "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/.openplotter/openplotter.conf"
 
-# Copy the HALPI2-Hotspot conf file to the right place
-install -m 600 files/OpenPlotter-Hotspot.nmconnection "${ROOTFS_DIR}/etc/NetworkManager/system-connections/HALPI2-Hotspot.nmconnection"
+# Copy the OpenPlotter-Hotspot conf file to the right place
+install -m 600 files/OpenPlotter-Hotspot.nmconnection "${ROOTFS_DIR}/etc/NetworkManager/system-connections/"
 
 # Add virtual wlan interface for AP mode
 install -m 755 files/create_ap_interface.sh "${ROOTFS_DIR}/usr/local/bin/create_ap_interface.sh"
