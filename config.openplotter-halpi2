@@ -8,4 +8,5 @@ WPA_COUNTRY="GB"
 STAGE_LIST="stage-pre-halpi-op stage-pre-openplotter stage0 stage1 stage2 stage3 stage4 stage-openplotter stage-halpi2-common stage-halpi2-op"
 ENABLE_SSH=1
 DEPLOY_COMPRESSION="xz"
-COMPRESSION_LEVEL=9
+COMPRESSION_LEVEL=6
+CONTAINER_NAME="pigen_work_openplotter-halpi2"
