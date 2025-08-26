@@ -1,0 +1,6 @@
+
+[all]
+
+# SD-card interface is disabled to prevent a longish delay at shutdown.
+# See: https://github.com/raspberrypi/linux/issues/7014
+dtparam=sd=off

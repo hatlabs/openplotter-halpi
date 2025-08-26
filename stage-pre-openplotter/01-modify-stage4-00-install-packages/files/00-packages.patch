@@ -12,8 +12,8 @@ index 511941c..238f0f7 100644
  raspberrypi-net-mods raspberrypi-ui-mods
  python3-pip
  python3-numpy
--alacarte rc-gui sense-hat
-+alacarte rc-gui
+-rc-gui sense-hat
++rc-gui
  tree
  libgl1-mesa-dri libgles1 libgles2-mesa xcompmgr
 -geany
