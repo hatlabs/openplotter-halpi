@@ -31,7 +31,7 @@ readonly SCRIPT="$PROJECT_ROOT/$(basename "$0")"
 ################################################################################
 # Project-specific commands follow.
 
-function build {
+function docker-build {
   act \
     pull_request \
     -s GITHUB_TOKEN="$(gh auth token)" \
@@ -40,7 +40,7 @@ function build {
     "$@"
 }
 
-function clean {
+function docker-clean {
   docker rm -v $(docker ps -a --filter "name=pigen_work" --format "{{.Names}}") 2>/dev/null || true
 }
 
