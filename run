@@ -28,8 +28,21 @@ readonly PROJECT_ROOT=$(pwd)
 # Store the absolute path to this script (useful for recursion).
 readonly SCRIPT="$PROJECT_ROOT/$(basename "$0")"
 
-# Project source directories.
-SRC="app shopship"
+################################################################################
+# Project-specific commands follow.
+
+function build {
+  act \
+    pull_request \
+    -s GITHUB_TOKEN="$(gh auth token)" \
+    -P ubuntu-latest-arm64=catthehacker/ubuntu:act-latest \
+    --artifact-server-path $PWD/artifacts \
+    "$@"
+}
+
+function clean {
+  docker rm -v $(docker ps -a --filter "name=pigen_work" --format "{{.Names}}") 2>/dev/null || true
+}
 
 ################################################################################
 # Meta-commands and utilities follow.
@@ -98,22 +111,6 @@ function _export_unset {
 function _test_export_unset {
   _export_unset .env
   env | sort
-}
-
-################################################################################
-# Project-specific commands follow.
-
-function build {
-  act \
-    pull_request \
-    -s GITHUB_TOKEN="$(gh auth token)" \
-    -P ubuntu-latest-arm64=catthehacker/ubuntu:act-latest \
-    --artifact-server-path $PWD/artifacts \
-    "$@"
-}
-
-function clean {
-  docker rm -v $(docker ps -a --filter "name=pigen_work" --format "{{.Names}}") 2>/dev/null || true
 }
 
 ################################################################################
